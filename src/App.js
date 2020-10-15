@@ -3,7 +3,8 @@ import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  Link
 } from "react-router-dom"
 import Menu from './Menu/Menu';
 import Hero from './Hero/Hero';

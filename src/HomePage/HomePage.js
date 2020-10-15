@@ -1,7 +1,51 @@
-import React from 'react';
+import React, {
+  useState,
+  useEffect
+} from 'react';
+import {
+  Pie
+} from 'react-chartjs-2';
+import axios from 'axios';
 
-function HomePage() {
-  return (
+const HomePage = () => {
+  const [chartData, setChartData] = useState({})
+  const chart = () => {
+    let chartLabel=[];
+    let chartData=[];
+    axios.get("http://localhost:4000/budget").then(res => {
+      console.log(res)
+      for (const data of res.data.myBudget) {
+       chartLabel.push(data.title);
+       chartData.push(data.budget);
+        //data.value[i] = res.data.myBudget[i].budget;
+        //data.labels[i] = res.data.myBudget[i].title;
+      }
+      setChartData({
+      labels:chartLabel,
+      datasets: [{
+        label: 'Chart JS',
+        data: chartData,
+        backgroundColor: [
+          "#98abc5",
+          "#8a89a6",
+          "#7b6888",
+          "#6b486b",
+          "#a05d56",
+          "#d0743c",
+          "#ff8c00",
+        ],
+      }]
+
+    })
+      //createChart();
+      //createChartD3();
+    })
+    
+  }
+  useEffect(() => {
+    chart();
+  }, [])
+  return ( 
     <main className="container center">
     <div role="Articles" aria-label="Article Contents" className="page-area">
       <div aria-label="Article 1" className="text-box">
@@ -66,9 +110,7 @@ function HomePage() {
 
       <div aria-label="Article 8" className="text-box">
         <h1>Chart</h1>
-        <article>
-          This app is free!!! And you are the only one holding your data!
-        </article>
+        <Pie data = { chartData}options = {{responsive: true}}/> 
       </div>
     </div>
   </main>
