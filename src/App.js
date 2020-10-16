@@ -1,5 +1,8 @@
-import React from 'react';
-import './App.css';
+import React,{
+  useState,
+  useEffect
+} from 'react';
+import './App.scss';
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,7 +15,49 @@ import HomePage from './HomePage/HomePage';
 import Footer from './Footer/Footer';
 import AboutPage from './AboutPage/AboutPage';
 import LoginPage from './LoginPage/LoginPage';
+import axios from 'axios';
+
 function App() {
+  const [d3ChartData, setD3ChartData] = useState([])
+  const [chartData, setChartData] = useState({})
+  const chart = () => {
+    let chartLabel=[];
+    let chartData=[];
+    axios.get("http://localhost:4000/budget").then(res => {
+      for (const data of res.data.myBudget) {
+       chartLabel.push(data.title);
+       chartData.push(data.budget);
+      }
+      const d3ChartData = res.data.myBudget.map(data => {
+        return ({
+          'value': data.budget,
+          'labels': data.title
+        })
+      })
+      setD3ChartData(d3ChartData)
+      setChartData({
+      labels:chartLabel,
+      datasets: [{
+        label: 'Chart JS',
+        data: chartData,
+        backgroundColor: [
+          "#98abc5",
+          "#8a89a6",
+          "#7b6888",
+          "#6b486b",
+          "#a05d56",
+          "#d0743c",
+          "#ff8c00",
+        ],
+      }]
+
+    })
+    })
+    
+  }
+  useEffect(() => {
+    chart();
+  }, [])
   return (
     <Router>
      <Menu></Menu>
@@ -26,7 +71,7 @@ function App() {
               <LoginPage></LoginPage>
             </Route>
             <Route path="/">
-              <HomePage></HomePage>
+              <HomePage dChartData={d3ChartData} chartData={chartData} ></HomePage>
             </Route>
         </Switch>
      </div>
